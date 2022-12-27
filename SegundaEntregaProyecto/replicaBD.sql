@@ -504,7 +504,6 @@ UNLOCK TABLES;
 /*!50001 SET character_set_results     = utf8mb4 */;
 /*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
 /*!50001 VIEW `compra_detallada_explicada` AS select `cd`.`compra_id` AS `compra_id`,`m`.`nombre` AS `nombre`,`m`.`precio` AS `precio`,`cd`.`cantidad` AS `cantidad`,(`m`.`precio` * `cd`.`cantidad`) AS `Total`,`c`.`fecha` AS `fecha`,`t`.`Nombre_Trabajador_Proveedor` AS `Nombre_Trabajador_Proveedor`,`t`.`Nombre_Empleado` AS `Nombre_Empleado` from (((`compra_detallada` `cd` join `materiales` `m` on((`cd`.`material_id` = `m`.`material_id`))) join `compras` `c` on((`c`.`compra_id` = `cd`.`compra_id`))) join (select `c`.`compra_id` AS `compra_id`,concat(`p`.`nombre`,' ',`p`.`apellido`) AS `Nombre_Trabajador_Proveedor`,concat(`e`.`nombre`,' ',`e`.`apellido`) AS `Nombre_Empleado` from ((`compras` `c` join `trabajador_proveedor` `p` on((`c`.`trabajador_proveedor_id` = `p`.`trabajador_proveedor_id`))) join `empleados` `e` on((`c`.`empleado_id` = `e`.`empleado_id`)))) `T` on((`cd`.`compra_id` = `t`.`compra_id`))) order by `cd`.`compra_id` */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -522,7 +521,6 @@ UNLOCK TABLES;
 /*!50001 SET character_set_results     = utf8mb4 */;
 /*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
 /*!50001 VIEW `mayor_egreso_material` AS select `cd`.`material_id` AS `material_id`,`m`.`nombre` AS `nombre`,sum(`cd`.`cantidad`) AS `Compras Totales`,`m`.`precio` AS `precio`,(sum(`cd`.`cantidad`) * `m`.`precio`) AS `Total Gastado` from (`compra_detallada` `cd` join `materiales` `m` on((`cd`.`material_id` = `m`.`material_id`))) group by `cd`.`material_id` order by (sum(`cd`.`cantidad`) * `m`.`precio`) desc */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -540,7 +538,6 @@ UNLOCK TABLES;
 /*!50001 SET character_set_results     = utf8mb4 */;
 /*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
 /*!50001 VIEW `mayor_ingreso_material` AS select `vd`.`material_id` AS `material_id`,`m`.`nombre` AS `nombre`,sum(`vd`.`cantidad`) AS `Ventas Totales`,`m`.`precio` AS `precio`,(sum(`vd`.`cantidad`) * `m`.`precio`) AS `Total Generado` from (`venta_detallada` `vd` join `materiales` `m` on((`vd`.`material_id` = `m`.`material_id`))) group by `vd`.`material_id` order by (sum(`vd`.`cantidad`) * `m`.`precio`) desc */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -558,7 +555,6 @@ UNLOCK TABLES;
 /*!50001 SET character_set_results     = utf8mb4 */;
 /*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
 /*!50001 VIEW `mayores_compradores` AS select `c`.`empleado_id` AS `empleado_id`,count(`c`.`empleado_id`) AS `Compras Totales`,concat(`e`.`nombre`,' ',`e`.`apellido`) AS `Nombre_Empleado`,`t`.`Area_de_Trabajo` AS `Area_de_Trabajo` from ((`compras` `c` join `empleados` `e` on((`c`.`empleado_id` = `e`.`empleado_id`))) join (select `e`.`empleado_id` AS `empleado_id`,`e`.`nombre` AS `nombre`,`a`.`nombre` AS `Area_de_Trabajo` from (`empleados` `e` join `areas` `a` on((`e`.`area_id` = `a`.`area_id`)))) `T` on((`t`.`empleado_id` = `c`.`empleado_id`))) group by `c`.`empleado_id` order by count(`c`.`empleado_id`) desc */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -576,7 +572,6 @@ UNLOCK TABLES;
 /*!50001 SET character_set_results     = utf8mb4 */;
 /*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
 /*!50001 VIEW `mayores_vendedores` AS select `v`.`empleado_id` AS `empleado_id`,count(`v`.`empleado_id`) AS `Ventas Totales`,concat(`e`.`nombre`,' ',`e`.`apellido`) AS `Nombre_Empleado`,`t`.`Area_de_Trabajo` AS `Area_de_Trabajo` from ((`ventas` `v` join `empleados` `e` on((`v`.`empleado_id` = `e`.`empleado_id`))) join (select `e`.`empleado_id` AS `empleado_id`,`e`.`nombre` AS `nombre`,`a`.`nombre` AS `Area_de_Trabajo` from (`empleados` `e` join `areas` `a` on((`e`.`area_id` = `a`.`area_id`)))) `T` on((`t`.`empleado_id` = `v`.`empleado_id`))) group by `v`.`empleado_id` order by count(`v`.`empleado_id`) desc */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -594,7 +589,6 @@ UNLOCK TABLES;
 /*!50001 SET character_set_results     = utf8mb4 */;
 /*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
 /*!50001 VIEW `venta_detallada_explicada` AS select `vd`.`venta_id` AS `venta_id`,`m`.`nombre` AS `nombre`,`m`.`precio` AS `precio`,`vd`.`cantidad` AS `cantidad`,(`m`.`precio` * `vd`.`cantidad`) AS `Total`,`v`.`fecha` AS `fecha`,`t`.`Nombre_Cliente` AS `Nombre_Cliente`,`t`.`Nombre_Empleado` AS `Nombre_Empleado` from (((`venta_detallada` `vd` join `materiales` `m` on((`vd`.`material_id` = `m`.`material_id`))) join `ventas` `v` on((`v`.`venta_id` = `vd`.`venta_id`))) join (select `v`.`venta_id` AS `venta_id`,concat(`c`.`nombre`,' ',`c`.`apellido`) AS `Nombre_Cliente`,concat(`e`.`nombre`,' ',`e`.`apellido`) AS `Nombre_Empleado` from ((`ventas` `v` join `clientes` `c` on((`v`.`cliente_id` = `c`.`cliente_id`))) join `empleados` `e` on((`v`.`empleado_id` = `e`.`empleado_id`)))) `T` on((`vd`.`venta_id` = `t`.`venta_id`))) order by `vd`.`venta_id` */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
