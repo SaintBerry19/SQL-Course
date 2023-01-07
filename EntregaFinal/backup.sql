@@ -1,8 +1,8 @@
 CREATE DATABASE  IF NOT EXISTS `ecommerce_sql_course` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `ecommerce_sql_course`;
--- MySQL dump 10.13  Distrib 8.0.30, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.30, for macos12 (x86_64)
 --
--- Host: 127.0.0.1    Database: ecommerce_sql_course
+-- Host: localhost    Database: ecommerce_sql_course
 -- ------------------------------------------------------
 -- Server version	8.0.30
 
@@ -281,7 +281,7 @@ CREATE TABLE `materiales` (
   PRIMARY KEY (`material_id`),
   KEY `proveedor_id` (`proveedor_id`),
   CONSTRAINT `materiales_ibfk_1` FOREIGN KEY (`proveedor_id`) REFERENCES `proveedor` (`proveedor_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=195 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=197 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -493,6 +493,142 @@ INSERT INTO `ventas` VALUES (1,351,45,'2022-10-23'),(2,463,5,'2022-02-19'),(3,14
 UNLOCK TABLES;
 
 --
+-- Dumping routines for database 'ecommerce_sql_course'
+--
+/*!50003 DROP FUNCTION IF EXISTS `total_compras` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` FUNCTION `total_compras`(numero_compra INT) RETURNS int
+    DETERMINISTIC
+BEGIN
+DECLARE resultado integer;
+SET resultado = (SELECT T.Total_de_compra
+FROM (SELECT c.compra_id, SUM((m.precio*c.cantidad)) as 'Total_de_compra'
+FROM compra_detallada c JOIN materiales m
+ON c.material_id = m.material_id
+GROUP BY compra_id
+ORDER BY compra_id ASC) T
+WHERE T.compra_id = numero_compra);
+RETURN resultado;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP FUNCTION IF EXISTS `total_venta` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` FUNCTION `total_venta`(numero_venta INT) RETURNS int
+    DETERMINISTIC
+BEGIN
+DECLARE resultado integer;
+SET resultado = (SELECT T.Total_de_venta 
+FROM (SELECT v.venta_id, SUM((m.precio*v.cantidad)) as 'Total_de_venta'
+FROM venta_detallada v JOIN materiales m
+ON v.material_id = m.material_id
+GROUP BY venta_id
+ORDER BY venta_id ASC) T
+WHERE T.venta_id = numero_venta);
+RETURN resultado;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_get_products` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_products`()
+BEGIN
+	SELECT * FROM materiales;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_get_products_order` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_products_order`(IN field CHAR(20),IN input CHAR(20))
+BEGIN
+	IF field <> '' THEN
+		SET @material_order = concat('ORDER BY ', field,' ',input);
+	ELSE
+		SET @material_order = '';
+	END IF;
+    
+    SET @clausula = concat('SELECT * FROM materiales ', @material_order);
+	PREPARE runSQL FROM @clausula;
+	EXECUTE runSQL;
+	DEALLOCATE PREPARE runSQL;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_insert_product` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_insert_product`(IN nombre CHAR(20), IN proveedor_id INT,IN precio INT,IN stock INT,OUT output VARCHAR(50))
+BEGIN
+	IF  nombre <> '' AND proveedor_id BETWEEN 1 AND 200 THEN
+		INSERT INTO materiales (proveedor_id,nombre,precio,stock) VALUES (proveedor_id,(nombre),precio,stock);
+        SET output = 'Inserción exitosa';
+	ELSE
+		SET output = 'ERROR: no se pudo crear el producto indicado';
+	END IF;
+    
+    SET @clausula = 'SELECT * FROM materiales ORDER BY material_id DESC ';
+	PREPARE runSQL FROM @clausula;
+	EXECUTE runSQL;
+	DEALLOCATE PREPARE runSQL;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+
+--
 -- Final view structure for view `compra_detallada_explicada`
 --
 
@@ -504,6 +640,7 @@ UNLOCK TABLES;
 /*!50001 SET character_set_results     = utf8mb4 */;
 /*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
 /*!50001 VIEW `compra_detallada_explicada` AS select `cd`.`compra_id` AS `compra_id`,`m`.`nombre` AS `nombre`,`m`.`precio` AS `precio`,`cd`.`cantidad` AS `cantidad`,(`m`.`precio` * `cd`.`cantidad`) AS `Total`,`c`.`fecha` AS `fecha`,`t`.`Nombre_Trabajador_Proveedor` AS `Nombre_Trabajador_Proveedor`,`t`.`Nombre_Empleado` AS `Nombre_Empleado` from (((`compra_detallada` `cd` join `materiales` `m` on((`cd`.`material_id` = `m`.`material_id`))) join `compras` `c` on((`c`.`compra_id` = `cd`.`compra_id`))) join (select `c`.`compra_id` AS `compra_id`,concat(`p`.`nombre`,' ',`p`.`apellido`) AS `Nombre_Trabajador_Proveedor`,concat(`e`.`nombre`,' ',`e`.`apellido`) AS `Nombre_Empleado` from ((`compras` `c` join `trabajador_proveedor` `p` on((`c`.`trabajador_proveedor_id` = `p`.`trabajador_proveedor_id`))) join `empleados` `e` on((`c`.`empleado_id` = `e`.`empleado_id`)))) `t` on((`cd`.`compra_id` = `t`.`compra_id`))) order by `cd`.`compra_id` */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -521,6 +658,7 @@ UNLOCK TABLES;
 /*!50001 SET character_set_results     = utf8mb4 */;
 /*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
 /*!50001 VIEW `mayor_egreso_material` AS select `cd`.`material_id` AS `material_id`,`m`.`nombre` AS `nombre`,sum(`cd`.`cantidad`) AS `Compras Totales`,`m`.`precio` AS `precio`,(sum(`cd`.`cantidad`) * `m`.`precio`) AS `Total Gastado` from (`compra_detallada` `cd` join `materiales` `m` on((`cd`.`material_id` = `m`.`material_id`))) group by `cd`.`material_id` order by (sum(`cd`.`cantidad`) * `m`.`precio`) desc */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -538,6 +676,7 @@ UNLOCK TABLES;
 /*!50001 SET character_set_results     = utf8mb4 */;
 /*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
 /*!50001 VIEW `mayor_ingreso_material` AS select `vd`.`material_id` AS `material_id`,`m`.`nombre` AS `nombre`,sum(`vd`.`cantidad`) AS `Ventas Totales`,`m`.`precio` AS `precio`,(sum(`vd`.`cantidad`) * `m`.`precio`) AS `Total Generado` from (`venta_detallada` `vd` join `materiales` `m` on((`vd`.`material_id` = `m`.`material_id`))) group by `vd`.`material_id` order by (sum(`vd`.`cantidad`) * `m`.`precio`) desc */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -555,6 +694,7 @@ UNLOCK TABLES;
 /*!50001 SET character_set_results     = utf8mb4 */;
 /*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
 /*!50001 VIEW `mayores_compradores` AS select `c`.`empleado_id` AS `empleado_id`,count(`c`.`empleado_id`) AS `Compras Totales`,concat(`e`.`nombre`,' ',`e`.`apellido`) AS `Nombre_Empleado`,`t`.`Area_de_Trabajo` AS `Area_de_Trabajo` from ((`compras` `c` join `empleados` `e` on((`c`.`empleado_id` = `e`.`empleado_id`))) join (select `e`.`empleado_id` AS `empleado_id`,`e`.`nombre` AS `nombre`,`a`.`nombre` AS `Area_de_Trabajo` from (`empleados` `e` join `areas` `a` on((`e`.`area_id` = `a`.`area_id`)))) `t` on((`t`.`empleado_id` = `c`.`empleado_id`))) group by `c`.`empleado_id` order by count(`c`.`empleado_id`) desc */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -572,6 +712,7 @@ UNLOCK TABLES;
 /*!50001 SET character_set_results     = utf8mb4 */;
 /*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
 /*!50001 VIEW `mayores_vendedores` AS select `v`.`empleado_id` AS `empleado_id`,count(`v`.`empleado_id`) AS `Ventas Totales`,concat(`e`.`nombre`,' ',`e`.`apellido`) AS `Nombre_Empleado`,`t`.`Area_de_Trabajo` AS `Area_de_Trabajo` from ((`ventas` `v` join `empleados` `e` on((`v`.`empleado_id` = `e`.`empleado_id`))) join (select `e`.`empleado_id` AS `empleado_id`,`e`.`nombre` AS `nombre`,`a`.`nombre` AS `Area_de_Trabajo` from (`empleados` `e` join `areas` `a` on((`e`.`area_id` = `a`.`area_id`)))) `t` on((`t`.`empleado_id` = `v`.`empleado_id`))) group by `v`.`empleado_id` order by count(`v`.`empleado_id`) desc */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -589,6 +730,7 @@ UNLOCK TABLES;
 /*!50001 SET character_set_results     = utf8mb4 */;
 /*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
 /*!50001 VIEW `venta_detallada_explicada` AS select `vd`.`venta_id` AS `venta_id`,`m`.`nombre` AS `nombre`,`m`.`precio` AS `precio`,`vd`.`cantidad` AS `cantidad`,(`m`.`precio` * `vd`.`cantidad`) AS `Total`,`v`.`fecha` AS `fecha`,`t`.`Nombre_Cliente` AS `Nombre_Cliente`,`t`.`Nombre_Empleado` AS `Nombre_Empleado` from (((`venta_detallada` `vd` join `materiales` `m` on((`vd`.`material_id` = `m`.`material_id`))) join `ventas` `v` on((`v`.`venta_id` = `vd`.`venta_id`))) join (select `v`.`venta_id` AS `venta_id`,concat(`c`.`nombre`,' ',`c`.`apellido`) AS `Nombre_Cliente`,concat(`e`.`nombre`,' ',`e`.`apellido`) AS `Nombre_Empleado` from ((`ventas` `v` join `clientes` `c` on((`v`.`cliente_id` = `c`.`cliente_id`))) join `empleados` `e` on((`v`.`empleado_id` = `e`.`empleado_id`)))) `t` on((`vd`.`venta_id` = `t`.`venta_id`))) order by `vd`.`venta_id` */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -603,4 +745,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-01-04 18:01:16
+-- Dump completed on 2023-01-07 16:12:37
