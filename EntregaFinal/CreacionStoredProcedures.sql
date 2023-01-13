@@ -54,3 +54,83 @@ $$
 
 CALL sp_insert_product('Garmin forerunner',201,1,1, @result);
 SELECT @result as result_insert_product
+
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE `sp_insert_ventas_detalladas`(IN venta_id INT,IN material_id INT,IN cantidad INT,OUT output VARCHAR(50))
+BEGIN
+	IF material_id BETWEEN 1 AND (SELECT COUNT(1) FROM materiales) AND venta_id BETWEEN 1 AND (SELECT COUNT(1) FROM ventas) THEN
+		INSERT INTO venta_detallada (venta_id,material_id,cantidad) VALUES (venta_id,material_id,cantidad);
+		SET output = 'Inserción exitosa';
+	ELSE
+		SET output = 'Problema al generar venta';
+	END IF;
+    SET @clausula = ('SELECT * FROM venta_detallada ');
+	PREPARE runSQL FROM @clausula;
+	EXECUTE runSQL;
+	DEALLOCATE PREPARE runSQL;
+END
+$$
+
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE `sp_insert_ventas`(IN cliente_id INT,IN empleado_id INT,OUT output VARCHAR(50))
+BEGIN
+	IF cliente_id BETWEEN 1 AND (SELECT COUNT(1) FROM clientes) AND empleado_id BETWEEN 1 AND (SELECT COUNT(1) FROM empleados) THEN
+		INSERT INTO ventas (cliente_id,empleado_id,fecha) VALUES (cliente_id,empleado_id,CURRENT_DATE());
+        SET output = 'Inserción exitosa';
+	ELSE
+		SET output = 'Problema al generar venta, cliente_id o empleado_id erroneo';
+	END IF;
+    
+    SET @clausula = ('SELECT * FROM ventas ');
+	PREPARE runSQL FROM @clausula;
+	EXECUTE runSQL;
+	DEALLOCATE PREPARE runSQL;
+END
+$$
+
+
+DELIMITER ;
+
+
+DELIMITER $$
+CREATE PROCEDURE `sp_insert_compras_detalladas`(IN compra_id INT,IN material_id INT,IN cantidad INT,OUT output VARCHAR(50))
+BEGIN
+	IF material_id BETWEEN 1 AND (SELECT COUNT(1) FROM materiales) AND compra_id BETWEEN 1 AND (SELECT COUNT(1) FROM compras) THEN
+		INSERT INTO compra_detallada (compra_id,material_id,cantidad) VALUES (compra_id,material_id,cantidad);
+		SET output = 'Inserción exitosa';
+	ELSE
+		SET output = 'Problema al generar compra';
+	END IF;
+    SET @clausula = ('SELECT * FROM compra_detallada ');
+	PREPARE runSQL FROM @clausula;
+	EXECUTE runSQL;
+	DEALLOCATE PREPARE runSQL;
+END
+$$
+
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE `sp_insert_compras`(IN trabajador_proveedor_id INT,IN empleado_id INT,OUT output VARCHAR(150))
+BEGIN
+	IF trabajador_proveedor_id BETWEEN 1 AND (SELECT COUNT(1) FROM trabajador_proveedor) AND empleado_id BETWEEN 1 AND (SELECT COUNT(1) FROM empleados) THEN
+		INSERT INTO compras (trabajador_proveedor_id,empleado_id,fecha) VALUES (trabajador_proveedor_id,empleado_id,CURRENT_DATE());
+        SET output = 'Inserción exitosa';
+	ELSE
+		SET output = 'Problema al generar compra, trabajador_proveedor_id o empleado_id erroneo';
+	END IF;
+    
+    SET @clausula = ('SELECT * FROM compras ');
+	PREPARE runSQL FROM @clausula;
+	EXECUTE runSQL;
+	DEALLOCATE PREPARE runSQL;
+END
+$$
+
+
+DELIMITER ;
+

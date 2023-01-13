@@ -40,3 +40,14 @@ END$$
 
 DELIMITER ;
 
+DELIMITER $$
+USE `ecommerce_sql_course`$$
+CREATE FUNCTION `seleccionar_ventaid`(venta_id INT) RETURNS int
+    DETERMINISTIC
+BEGIN
+DECLARE resultado integer;
+SET resultado = venta_id;
+RETURN resultado;
+END$$
+
+DELIMITER ;
