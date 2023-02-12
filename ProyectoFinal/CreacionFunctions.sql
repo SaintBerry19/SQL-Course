@@ -9,7 +9,7 @@ BEGIN
 DECLARE resultado integer;
 SET resultado = (SELECT T.Total_de_compra
 FROM (SELECT c.compra_id, SUM((m.precio*c.cantidad)) as 'Total_de_compra'
-FROM compra_detallada c JOIN materiales m
+FROM compras_detalladas c JOIN materiales m
 ON c.material_id = m.material_id
 GROUP BY compra_id
 ORDER BY compra_id ASC) T
@@ -30,7 +30,7 @@ BEGIN
 DECLARE resultado integer;
 SET resultado = (SELECT T.Total_de_venta 
 FROM (SELECT v.venta_id, SUM((m.precio*v.cantidad)) as 'Total_de_venta'
-FROM venta_detallada v JOIN materiales m
+FROM ventas_detalladas v JOIN materiales m
 ON v.material_id = m.material_id
 GROUP BY venta_id
 ORDER BY venta_id ASC) T

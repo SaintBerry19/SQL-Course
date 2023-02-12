@@ -7,7 +7,6 @@ BEGIN
 END
 $$
 
-CALL sp_get_products();
 
 # Ver prodcutos de la tabla materiales, dando los parametros:
 #1. Parametro para ordenar(columna de la tabla)
@@ -29,17 +28,16 @@ BEGIN
 END
 $$
 
-CALL sp_get_products_order('nombre','ASC');
 
 
 # Insertar productos de la tabla materiales
-# Escribir, nombre del producto, id del proveedor (numero del 1 al 200), precio y stock.
+# Escribir, nombre del producto, id del proveedor (numero del 1 al 200), precio e inventario.
 
 DELIMITER $$
-CREATE PROCEDURE `sp_insert_product`(IN nombre CHAR(20), IN proveedor_id INT,IN precio INT,IN stock INT,OUT output VARCHAR(50))
+CREATE PROCEDURE `sp_insert_product`(IN nombre CHAR(20), IN proveedor_id INT,IN precio INT,IN inventario INT,OUT output VARCHAR(50))
 BEGIN
 	IF  nombre <> '' AND proveedor_id BETWEEN 1 AND 200 THEN
-		INSERT INTO materiales (proveedor_id,nombre,precio,stock) VALUES (proveedor_id,(nombre),precio,stock);
+		INSERT INTO materiales (proveedor_id,nombre,precio,inventario) VALUES (proveedor_id,(nombre),precio,inventario);
         SET output = 'Inserción exitosa';
 	ELSE
 		SET output = 'ERROR: no se pudo crear el producto indicado';
@@ -52,8 +50,6 @@ BEGIN
 END
 $$
 
-CALL sp_insert_product('Garmin forerunner',201,1,1, @result);
-SELECT @result as result_insert_product
 
 DELIMITER ;
 
@@ -61,12 +57,12 @@ DELIMITER $$
 CREATE PROCEDURE `sp_insert_ventas_detalladas`(IN venta_id INT,IN material_id INT,IN cantidad INT,OUT output VARCHAR(50))
 BEGIN
 	IF material_id BETWEEN 1 AND (SELECT COUNT(1) FROM materiales) AND venta_id BETWEEN 1 AND (SELECT COUNT(1) FROM ventas) THEN
-		INSERT INTO venta_detallada (venta_id,material_id,cantidad) VALUES (venta_id,material_id,cantidad);
+		INSERT INTO ventas_detalladas (venta_id,material_id,cantidad) VALUES (venta_id,material_id,cantidad);
 		SET output = 'Inserción exitosa';
 	ELSE
 		SET output = 'Problema al generar venta';
 	END IF;
-    SET @clausula = ('SELECT * FROM venta_detallada ');
+    SET @clausula = ('SELECT * FROM ventas_detalladas ');
 	PREPARE runSQL FROM @clausula;
 	EXECUTE runSQL;
 	DEALLOCATE PREPARE runSQL;
@@ -100,12 +96,12 @@ DELIMITER $$
 CREATE PROCEDURE `sp_insert_compras_detalladas`(IN compra_id INT,IN material_id INT,IN cantidad INT,OUT output VARCHAR(50))
 BEGIN
 	IF material_id BETWEEN 1 AND (SELECT COUNT(1) FROM materiales) AND compra_id BETWEEN 1 AND (SELECT COUNT(1) FROM compras) THEN
-		INSERT INTO compra_detallada (compra_id,material_id,cantidad) VALUES (compra_id,material_id,cantidad);
+		INSERT INTO compras_detalladas (compra_id,material_id,cantidad) VALUES (compra_id,material_id,cantidad);
 		SET output = 'Inserción exitosa';
 	ELSE
 		SET output = 'Problema al generar compra';
 	END IF;
-    SET @clausula = ('SELECT * FROM compra_detallada ');
+    SET @clausula = ('SELECT * FROM compras_detalladas ');
 	PREPARE runSQL FROM @clausula;
 	EXECUTE runSQL;
 	DEALLOCATE PREPARE runSQL;
